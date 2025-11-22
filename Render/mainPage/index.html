@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NetSpeed-Monitor</title>
+  </head>
+  <!-- <style ></style> -->
+  <link rel="stylesheet" href="style.css" />
+  <body>
+    <div id="titlebar">
+      <div class="app-title">NetSpeed-Monitor</div>
+      <div class="closeWin">
+        <span id="minimize">─</span>
+        <!-- <span id="maximize">☐</span> -->
+        <span id="closeWindow">✖</span>
+      </div>
+    </div>
+
+    <div class="mainWin">
+      <div class="network-info-win">
+        <div class="network">
+          <p class="title">NETWORK</p>
+          <p class="label">Network</p>
+          <p id="ip-address">IP: --</p>
+          <p id="ping">Ping: -- ms</p>
+        </div>
+
+        <br />
+
+        <div class="network network-health">
+          <p class="title">NETWORK HEALTH</p>
+          <p class="label">Packet Loss:</p>
+          <p id="ip-health">IP: --</p>
+          <p id="ping-health">Ping: -- ms</p>
+        </div>
+      </div>
+
+      <div class="net-monitor-win">
+        <div class="up-down-speed-display">
+          <div class="down-speed">
+            <p id="downlad-title">DOWNLOAD</p>
+            <h1 id="down-speed">00.00 B/s</h1>
+          </div>
+          <div class="up-speed">
+            <p>UPLOAD</p>
+            <h1 id="up-speed">00.00 B/s</h1>
+          </div>
+        </div>
+        <div class="up-down-speed-graph"></div>
+      </div>
+
+      <div class="network-info-win daily-usage">
+        <div class="network monthly-usage net-usage">
+          <p class="title">DAILY USAGE</p>
+          <p><span>Upload Today</span> <span id="daily-upload">0 GB</span></p>
+          <p>
+            <span>Download Today</span> <span id="daily-download">0 GB</span>
+          </p>
+          <p><span>Total Today</span> <span id="daily-total">0 GB</span></p>
+        </div>
+
+        <br />
+
+        <div class="network network-health monthly-usage">
+          <p class="title">MONTHLY USAGE</p>
+          <p><span>Upload</span> <span id="monthly-upload">0 GB</span></p>
+          <p><span>Download</span> <span id="monthly-download">0 GB</span></p>
+          <p><span>Total</span> <span id="monthly-total">0 GB</span></p>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

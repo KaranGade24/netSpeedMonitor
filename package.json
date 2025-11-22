@@ -1,0 +1,39 @@
+{
+  "name": "netSpeed_monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./main/main.js",
+  "scripts": {
+    "build": "electron-builder",
+    "dist": "electron-builder --win --x64",
+    "start": "set NODE_OPTIONS=--trace-warnings && electronmon .",
+    "dev": "nodemon --watch . --ext js,html main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^17.4.0",
+    "electron-builder": "^26.0.12"
+  },
+  "dependencies": {
+    "electronmon": "^2.0.4",
+    "node-os-utils": "^2.0.1",
+    "sqlite3": "^5.1.7",
+    "systeminformation": "^5.27.11"
+  },
+  "build": {
+    "appId": "com.karan.netspeed.monitor",
+    "productName": "NetSpeed Monitor",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    }
+  }
+}

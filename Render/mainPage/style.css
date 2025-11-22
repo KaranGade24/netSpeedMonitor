@@ -1,0 +1,160 @@
+:root {
+  --primary-color: rgb(255, 255, 255);
+  --secondry-color: #edf2f6;
+  --border-color: rgb(77, 75, 75);
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  /* user-select: none; */
+  /* -webkit-user-select: none; */
+  /* -moz-user-select: none; */
+  /* -ms-user-select: none; */
+  font-family: "Arial, Helvetica, sans-serif";
+}
+
+#titlebar {
+  -webkit-app-region: drag;
+  background: var(--primary-color);
+  color: black;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  padding-right: 0px;
+  border-bottom: 1px solid;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.closeWin {
+  min-height: 100%;
+  margin-right: 0px;
+}
+
+.closeWin span {
+  font-size: 1.2rem; /* corrected */
+  -webkit-app-region: no-drag; /* make buttons clickable */
+  padding: 10px;
+  padding-bottom: 7px;
+  height: 100%;
+}
+.closeWin span:hover {
+  cursor: pointer;
+  background-color: #04010152;
+}
+#closeWindow:hover {
+  background-color: rgb(148, 7, 7);
+  color: wheat;
+}
+
+.mainWin {
+  margin: 18px;
+  height: calc(100vh - 80px);
+  background-color: var(--secondry-color);
+  display: flex;
+  border-radius: 10px;
+}
+
+.network-info-win {
+  background-color: var(--secondry-color);
+  width: 25%;
+  border-radius: 10px;
+}
+
+.network-info-win .network {
+  border-radius: 10px;
+  height: 28%;
+  color: black;
+  font-size: 1rem;
+  font-weight: 300;
+  background-color: var(--primary-color);
+  border: 1px solid rgb(77, 75, 75);
+}
+
+.network-info-win .network p {
+  padding: 6px 0px;
+  padding-left: 10px;
+}
+
+.network-info-win .network .title {
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+  margin: 0px;
+}
+
+.network-info-win .network-health {
+  background-color: var(--primary-color);
+  /* width: 100%; */
+  height: 58%;
+}
+
+.net-monitor-win {
+  margin: 0px 20px 0px 20px;
+  width: 50%;
+  height: 90%;
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.up-down-speed-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  width: 100%;
+  height: 30%;
+  background-color: var(--primary-color);
+  border-radius: 10px 10px 0px 0px;
+}
+
+.up-down-speed-display div {
+  width: 48%;
+  height: 100%;
+  background-color: var(--primary-color);
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.up-down-speed-display div p {
+  font-size: 1.4rem;
+}
+
+.net-monitor-win .up-down-speed-graph {
+  margin-top: 5%;
+  background-color: var(--primary-color);
+  width: 100%;
+  height: 65%;
+  border-radius: 0 0 10px 10px;
+}
+.monthly-usage {
+  margin-right: 30px;
+  width: 200px;
+}
+.monthly-usage p {
+  margin: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+.monthly-usage p span {
+  margin-right: 5px;
+}
+
+.net-usage {
+  width: 200px;
+}
+
+.net-usage p {
+  margin: 0px;
+}
+
+.net-usage p span {
+  margin-right: 10px;
+}

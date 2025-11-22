@@ -1,0 +1,9 @@
+{
+  "watch": ["."],
+  "ext": "js,html,css,json",
+  "ignore": [
+    "main/Utilities/usage.db",
+    "main/Utilities/usage.db-shm",
+    "main/Utilities/usage.db-wal"
+  ]
+}
