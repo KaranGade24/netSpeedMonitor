@@ -1,160 +1,246 @@
 :root {
-  --primary-color: rgb(255, 255, 255);
-  --secondry-color: #edf2f6;
-  --border-color: rgb(77, 75, 75);
+  /* Professional Light Theme Palette */
+  --bg-app: #f3f4f6; /* Lightest Grey for main background */
+  --bg-panel: #ffffff; /* Pure White for cards */
+  --text-primary: #1f2937; /* Dark Grey for main text (High Contrast) */
+  --text-secondary: #6b7280; /* Muted Grey for labels */
+  --border-color: #e5e7eb; /* Very subtle borders */
+
+  /* Status Colors */
+  --accent-color: #3b82f6; /* Blue for headers */
+  --download-color: #10b981; /* Emerald Green */
+  --upload-color: #6366f1; /* Indigo/Purple for upload */
+  --hover-danger: #ef4444; /* Red for close button */
 }
 
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  /* user-select: none; */
-  /* -webkit-user-select: none; */
-  /* -moz-user-select: none; */
-  /* -ms-user-select: none; */
-  font-family: "Arial, Helvetica, sans-serif";
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* --- Title Bar --- */
 #titlebar {
   -webkit-app-region: drag;
-  background: var(--primary-color);
-  color: black;
+  background: var(--bg-panel);
+  color: var(--text-primary);
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
-  padding-right: 0px;
-  border-bottom: 1px solid;
-  font-size: 1.2rem;
-  font-weight: 500;
+  padding: 0 15px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.app-title {
+  letter-spacing: 0.5px;
 }
 
 .closeWin {
-  min-height: 100%;
-  margin-right: 0px;
+  -webkit-app-region: no-drag;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .closeWin span {
-  font-size: 1.2rem; /* corrected */
-  -webkit-app-region: no-drag; /* make buttons clickable */
-  padding: 10px;
-  padding-bottom: 7px;
+  font-size: 1.1rem;
+  padding: 0 12px;
   height: 100%;
-}
-.closeWin span:hover {
-  cursor: pointer;
-  background-color: #04010152;
-}
-#closeWindow:hover {
-  background-color: rgb(148, 7, 7);
-  color: wheat;
-}
-
-.mainWin {
-  margin: 18px;
-  height: calc(100vh - 80px);
-  background-color: var(--secondry-color);
   display: flex;
-  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
 }
 
+.closeWin span:hover {
+  background-color: #e5e7eb;
+  color: var(--text-primary);
+}
+
+#closeWindow:hover {
+  background-color: var(--hover-danger);
+  color: white;
+}
+
+/* --- Main Window Layout --- */
+.mainWin {
+  margin: 15px;
+  height: calc(100vh - 70px);
+  display: flex;
+  gap: 15px; /* Modern spacing logic */
+}
+
+/* --- Left & Right Side Panels --- */
 .network-info-win {
-  background-color: var(--secondry-color);
-  width: 25%;
-  border-radius: 10px;
+  width: 25%; /* Preserved logic */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .network-info-win .network {
-  border-radius: 10px;
-  height: 28%;
-  color: black;
-  font-size: 1rem;
-  font-weight: 300;
-  background-color: var(--primary-color);
-  border: 1px solid rgb(77, 75, 75);
+  background-color: var(--bg-panel);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  /* Soft shadow for depth */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.network-info-win .network p {
-  padding: 6px 0px;
-  padding-left: 10px;
+/* Logic: Top left panel height */
+.network-info-win .network:first-child {
+  height: 28%; /* Preserved logic */
+}
+
+/* Logic: Bottom left panel height */
+.network-info-win .network-health {
+  height: 58%; /* Preserved logic */
+  background-color: var(--bg-panel);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .network-info-win .network .title {
+  background-color: #fafafa; /* Very slight contrast for headers */
   border-bottom: 1px solid var(--border-color);
   width: 100%;
-  margin: 0px;
+  padding: 10px 15px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  letter-spacing: 1px;
 }
 
-.network-info-win .network-health {
-  background-color: var(--primary-color);
-  /* width: 100%; */
-  height: 58%;
+.network-info-win .network p {
+  padding: 5px 15px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
 }
 
+/* Styling for dynamic data (IDs) */
+.network-info-win .network p[id] {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: "Consolas", monospace; /* Monospace for numbers */
+}
+
+/* --- Center Speed Monitor --- */
 .net-monitor-win {
-  margin: 0px 20px 0px 20px;
-  width: 50%;
-  height: 90%;
-  background-color: var(--primary-color);
-  border-radius: 10px;
+  flex-grow: 1; /* Fills remaining space */
+  background-color: var(--bg-panel);
+  border-radius: 8px;
   border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  margin: 0; /* Removed margin to use gap on parent instead */
 }
 
 .up-down-speed-display {
   display: flex;
   justify-content: center;
   align-items: center;
-  align-content: center;
   width: 100%;
   height: 30%;
-  background-color: var(--primary-color);
-  border-radius: 10px 10px 0px 0px;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(to bottom, #ffffff, #fafafa);
+  border-radius: 8px 8px 0 0;
 }
 
 .up-down-speed-display div {
-  width: 48%;
+  width: 50%;
   height: 100%;
-  background-color: var(--primary-color);
-  margin: 10px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
 }
 
+/* KARAN GADE, [11/23/2025 1:57 AM] */
+/* Labels like DOWNLOAD / UPLOAD */
 .up-down-speed-display div p {
-  font-size: 1.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+  letter-spacing: 1px;
 }
 
+/* Speed Numbers */
+.up-down-speed-display h1 {
+  font-family: "Consolas", monospace;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+#down-speed {
+  color: var(--download-color);
+}
+
+#up-speed {
+  color: var(--upload-color);
+}
+
+/* Graph Area */
 .net-monitor-win .up-down-speed-graph {
-  margin-top: 5%;
-  background-color: var(--primary-color);
   width: 100%;
-  height: 65%;
-  border-radius: 0 0 10px 10px;
-}
-.monthly-usage {
-  margin-right: 30px;
-  width: 200px;
-}
-.monthly-usage p {
-  margin: 5px;
-  display: flex;
-  justify-content: space-between;
-}
-.monthly-usage p span {
-  margin-right: 5px;
+  flex-grow: 1;
+  background-color: #ffffff;
+  border-radius: 0 0 8px 8px;
+  position: relative;
 }
 
+/* --- Usage Panels (Right Side) --- */
+/* Targeting the daily-usage specific structure */
+.network-info-win.daily-usage .network {
+  height: auto; /* Allow these to grow based on content */
+  flex-grow: 1;
+}
+
+.monthly-usage,
 .net-usage {
-  width: 200px;
+  width: 100%;
+  padding-bottom: 10px;
 }
 
+.monthly-usage p,
 .net-usage p {
-  margin: 0px;
+  display: flex;
+  justify-content: space-between; /* Pushes value to the right */
+  margin: 8px 0;
+  width: 100%;
 }
 
-.net-usage p span {
-  margin-right: 10px;
+.monthly-usage p span:first-child,
+.net-usage p span:first-child {
+  color: var(--text-secondary);
+}
+
+.monthly-usage p span[id],
+.net-usage p span[id] {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: "Consolas", monospace;
 }

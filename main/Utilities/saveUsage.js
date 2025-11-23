@@ -1,4 +1,3 @@
-// main/Utilities/saveUsage.js
 const db = require("./db");
 
 // =============================
@@ -11,19 +10,21 @@ function queueUsageWrite(upload, download) {
   upload = Number(upload) || 0;
   download = Number(download) || 0;
 
-  // Avoid storing every 0 reading (idle)
-  if (upload === 0 && download === 0) {
-    // but still update the queue so we don't hold older values indefinitely
-    saveQueue = { upload, download };
-  } else {
-    saveQueue = { upload, download };
-  }
+  // Only update queue if non-zero or first update
+  saveQueue = { upload, download };
 
+  // If timer already exists, skip
   if (queueUsageWrite.timer) return;
 
   queueUsageWrite.timer = setTimeout(() => {
     if (saveQueue) {
-      writeUsageToDB(saveQueue.upload, saveQueue.download);
+      const { upload, download } = saveQueue;
+
+      // Skip writing if both are zero to avoid idle data
+      if (upload !== 0 || download !== 0) {
+        writeUsageToDB(upload, download);
+      }
+
       saveQueue = null;
     }
     queueUsageWrite.timer = null;
@@ -32,8 +33,8 @@ function queueUsageWrite(upload, download) {
 
 function writeUsageToDB(upload, download) {
   const query = `
-    INSERT INTO usage_stats (upload_bytes, download_bytes)
-    VALUES (?, ?)
+    INSERT INTO usage_stats (timestamp, upload_bytes, download_bytes)
+    VALUES (datetime('now', 'localtime'), ?, ?)
   `;
 
   db.run(query, [upload, download], (err) => {

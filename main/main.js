@@ -58,23 +58,6 @@ const createWindow = async () => {
 
     win.loadFile(htmlPath).catch((err) => console.error("Load error:", err));
 
-    db.all(
-      "SELECT * FROM usage_stats ORDER BY id DESC LIMIT 5",
-      (err, rows) => {
-        if (err) console.error(err);
-        else console.table(rows);
-      }
-    );
-
-    db.all("PRAGMA table_info(usage_stats)", (err, rows) => {
-      if (err) console.error(err);
-      else console.table(rows);
-    });
-
-    db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, rows) => {
-      console.table(rows);
-    });
-
     win.once("ready-to-show", () => {
       win.show();
       setTimeout(() => startPythonStream(), 1200);
@@ -111,15 +94,11 @@ try {
   });
 
   ipcMain.on("get-usage-live", async (event) => {
-    console.log("get-usage-live3");
-
     getDailyUsage((err, daily) => {
       if (err) return;
 
       getMonthlyUsage((err2, monthly) => {
         if (err2) return;
-
-        console.log("3.5");
 
         event.reply("usage-live-data", {
           daily: {

@@ -1,4 +1,3 @@
-// preload.js
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -14,7 +13,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   requestUsageLive: () => ipcRenderer.send("get-usage-live"),
 
   onUsageLive: (cb) => {
-    console.log("4");
     ipcRenderer.on("usage-live-data", (e, data) => cb(data));
   },
 });

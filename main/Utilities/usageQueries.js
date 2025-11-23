@@ -12,11 +12,11 @@ function format(bytes) {
 }
 
 // ==========================
-// GET DAILY USAGE (LIVE)
+// GET DAILY USAGE (CALENDAR DAY)
 // ==========================
 function getDailyUsage(callback) {
   const query = `
-    SELECT 
+    SELECT
       SUM(upload_bytes) AS upload,
       SUM(download_bytes) AS download
     FROM usage_stats
@@ -26,18 +26,22 @@ function getDailyUsage(callback) {
   db.get(query, (err, row) => {
     if (err) return callback(err);
 
-    const result = {
-      upload: row.upload || 0,
-      download: row.download || 0,
-      total: (row.upload || 0) + (row.download || 0),
-    };
+    const upload = row.upload || 0;
+    const download = row.download || 0;
 
-    callback(null, result);
+    callback(null, {
+      upload: upload,
+      download: download,
+      total: upload + download,
+      uploadFormatted: format(upload),
+      downloadFormatted: format(download),
+      totalFormatted: format(upload + download),
+    });
   });
 }
 
 // ==========================
-// GET MONTHLY USAGE (LIVE)
+// GET MONTHLY USAGE (CALENDAR MONTH)
 // ==========================
 function getMonthlyUsage(callback) {
   const query = `
@@ -51,13 +55,17 @@ function getMonthlyUsage(callback) {
   db.get(query, (err, row) => {
     if (err) return callback(err);
 
-    const result = {
-      upload: row.upload || 0,
-      download: row.download || 0,
-      total: (row.upload || 0) + (row.download || 0),
-    };
+    const upload = row.upload || 0;
+    const download = row.download || 0;
 
-    callback(null, result);
+    callback(null, {
+      upload: upload,
+      download: download,
+      total: upload + download,
+      uploadFormatted: format(upload),
+      downloadFormatted: format(download),
+      totalFormatted: format(upload + download),
+    });
   });
 }
 
