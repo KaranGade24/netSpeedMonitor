@@ -1,13 +1,10 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const {
-  startNetworkStream,
-  setWindow,
-  isOnline,
-  getNetworkSpeed,
-} = require("./Utilities/getNetwork");
+const { startPythonStream, setWindow } = require("./Utilities/getNetwork");
 
 const setupGPU = require("./Utilities/setupGPU");
+const getNetworkSpeed = require("./Utilities/getNetwork");
+const network = require("./Utilities/getNetwork");
 const db = require("./Utilities/db");
 const process = require("process");
 const {
@@ -57,13 +54,17 @@ const createWindow = async () => {
 
     setWindow(win);
 
-    const htmlPath = path.join(__dirname, "../Render/mainPage/index.html");
-
+    const htmlPath = path.join(
+      app.getAppPath(),
+      "Render",
+      "mainPage",
+      "index.html"
+    );
     win.loadFile(htmlPath).catch((err) => console.error("Load error:", err));
 
     win.once("ready-to-show", () => {
       win.show();
-      setTimeout(() => startNetworkStream(), 1200);
+      setTimeout(() => startPythonStream(), 1200);
     });
   } catch (error) {
     console.error("error in creing window", error);
@@ -80,27 +81,26 @@ try {
   //   win.isMaximized() ? win.unmaximize() : win.maximize()
   // );
 
+  // `get-net-speed` was previously trying to call a non-exported API.
+  // Leave a simple reply so older renderer calls do not crash the app.
   ipcMain.on("get-net-speed", async (e) => {
-    if (isOnline()) {
-      const speed = getNetworkSpeed();
-      e.reply("net-speed-data", speed);
-    } else {
-      e.reply("net-speed-data", {
-        downloadSpeed: "0 B/s",
-        uploadSpeed: "0 B/s",
-        ip: "0.0.0.0",
-        ping: "--",
-        packetLoss: "--",
-      });
-    }
+    e.reply("net-speed-data", { error: "not-implemented" });
   });
 
   ipcMain.on("window-close", () => {
-    if (win) {
+   try{ if (win) {
       // make sure the window exists
       win.close(); // close it
       win = null; // free reference
-    }
+      db.close();
+    }}catch(err){
+     console.error(err);
+   } finally {
+
+     db.close((eer) => {
+      console.log("error insave data: ",err);
+    });
+  }
   });
 
   ipcMain.on("get-usage-live", async (event) => {
@@ -147,6 +147,11 @@ app.on("before-quit", () => {
     });
   } catch (e) {
     console.warn("DB close error:", e);
+  } finally {
+    db.close((err) => {
+      if (err) console.error("Error closing DB:", err);
+      else console.info("DB closed.");
+    });
   }
 });
 
