@@ -23,6 +23,8 @@ window.electronAPI.onNetSpeed((data) => {
   document.querySelector(
     ".network-health .label"
   ).innerText = `Packet Loss: ${data.packetLoss}`;
+
+  document.getElementById("isOnline").innerText = data.isOnline;
 });
 
 close_win.addEventListener("click", () => {

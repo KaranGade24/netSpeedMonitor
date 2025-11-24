@@ -2,6 +2,7 @@
 const { spawn } = require("child_process");
 const path = require("path");
 const queueUsageWrite = require("./saveUsage");
+const { net } = require("electron");
 
 let winRef = null;
 
@@ -38,53 +39,67 @@ function setWindow(win) {
 }
 
 function startPythonStream() {
-  const pythonPath = path
-    .join(__dirname, "./network_speed.py")
-    .replace(/\\/g, "/");
-  console.log("Python running:", pythonPath);
+  // Full path to embedded Python
+  const pythonExe = path.join(process.resourcesPath, "python", "python.exe");
 
-  const python = spawn("python", [pythonPath], { windowsHide: true });
+  // Path to your Python script
+  const scriptPath = path.join(
+    process.resourcesPath,
+    "python",
+    "network_speed.py"
+  );
+
+  console.log("Running Embedded Python:", pythonExe);
+  console.log("Python Script:", scriptPath);
+
+  // Spawn Python
+  const python = spawn(pythonExe, [scriptPath], {
+    windowsHide: true,
+  });
 
   python.stdout.on("data", (data) => {
-    // split by newline because Python prints JSON per line
     const lines = data.toString().split(/\r?\n/);
 
-    for (const lineRaw of lines) {
-      const line = lineRaw.trim();
+    for (const raw of lines) {
+      const line = raw.trim();
       if (!line) continue;
 
       try {
         const json = JSON.parse(line);
 
-        // Save to DB (queued inside saveUsage)
+        // Save to DB
         queueUsageWrite(json.upload_bytes, json.download_bytes);
 
-        // Format speeds for UI using raw bytes (per second)
+        // online status
+        const online = net.isOnline();
+
+        // format for UI
         const formatted = {
           downloadSpeed: formatBytes(json.download_bytes),
           uploadSpeed: formatBytes(json.upload_bytes),
           ip: json.ip || "0.0.0.0",
-          ping: typeof json.ping !== "undefined" ? `${json.ping} ms` : "--",
+          ping: json.ping !== undefined ? `${json.ping} ms` : "--",
           packetLoss:
-            typeof json.packet_loss !== "undefined"
-              ? `${json.packet_loss}%`
-              : "--",
+            json.packet_loss !== undefined ? `${json.packet_loss}%` : "--",
+          isOnline: online
+            ? "Network Status: ONLINE"
+            : "Network Status: OFFLINE",
         };
 
-        // send formatted to renderer on the 'speed-update' channel (preload expects this)
         safeSend("speed-update", formatted);
       } catch (err) {
-        // log the exact line that failed (non fatal)
-        console.error("JSON Parse Failed (single line):", line);
+        console.error("JSON Parse Error:", line);
       }
     }
   });
 
   python.stderr.on("data", (data) => {
-    console.error("Python Error:", data.toString());
+    console.error("PYTHON ERROR:", data.toString());
   });
 
-  python.on("close", () => console.log("Python closed"));
+  python.on("close", () => {
+    console.log("Python Process Closed");
+  });
 }
 
 module.exports = { startPythonStream, setWindow };
