@@ -1,8 +1,7 @@
-// main/Utilities/getNetwork.js
 const { spawn } = require("child_process");
 const path = require("path");
 const queueUsageWrite = require("./saveUsage");
-const { net } = require("electron");
+const { net, app } = require("electron");
 
 let winRef = null;
 
@@ -28,9 +27,6 @@ function safeSend(channel, data) {
     } catch (e) {
       console.warn("safeSend error:", e);
     }
-  } else {
-    // renderer not available (hidden, reloading, closed) — skip sending
-    // console.log("⚠ Renderer not available, skipping send");
   }
 }
 
@@ -39,67 +35,56 @@ function setWindow(win) {
 }
 
 function startPythonStream() {
-  // Full path to embedded Python
-  const pythonExe = path.join(process.resourcesPath, "python", "python.exe");
+  const isDev = !app.isPackaged;
 
-  // Path to your Python script
-  const scriptPath = path.join(
-    process.resourcesPath,
-    "python",
-    "network_speed.py"
-  );
+  const pythonExe = isDev
+    ? path.join(__dirname, "../../python", "python.exe") // <-- DEV PATH
+    : path.join(process.resourcesPath, "python", "python.exe"); // <-- BUILD PATH
 
-  console.log("Running Embedded Python:", pythonExe);
-  console.log("Python Script:", scriptPath);
+  const script = isDev
+    ? path.join(__dirname, "../../python", "network_speed.py")
+    : path.join(process.resourcesPath, "python", "network_speed.py");
 
-  // Spawn Python
-  const python = spawn(pythonExe, [scriptPath], {
+  console.log("Running Python at:", pythonExe);
+
+  const python = spawn(pythonExe, [script], {
+    cwd: path.dirname(script),
     windowsHide: true,
   });
 
   python.stdout.on("data", (data) => {
     const lines = data.toString().split(/\r?\n/);
 
-    for (const raw of lines) {
-      const line = raw.trim();
-      if (!line) continue;
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
 
       try {
-        const json = JSON.parse(line);
-
-        // Save to DB
-        queueUsageWrite(json.upload_bytes, json.download_bytes);
-
-        // online status
-        const online = net.isOnline();
-
-        // format for UI
+        const json = JSON.parse(trimmed);
+        const isOnline = net.isOnline();
         const formatted = {
           downloadSpeed: formatBytes(json.download_bytes),
           uploadSpeed: formatBytes(json.upload_bytes),
-          ip: json.ip || "0.0.0.0",
-          ping: json.ping !== undefined ? `${json.ping} ms` : "--",
-          packetLoss:
-            json.packet_loss !== undefined ? `${json.packet_loss}%` : "--",
-          isOnline: online
+          ip: json.ip,
+          ping: `${json.ping} ms`,
+          packetLoss: `${json.packet_loss}%`,
+          isOnline: isOnline
             ? "Network Status: ONLINE"
             : "Network Status: OFFLINE",
         };
 
         safeSend("speed-update", formatted);
-      } catch (err) {
-        console.error("JSON Parse Error:", line);
+      } catch {
+        console.log("Parse failed:", trimmed);
       }
     }
   });
 
-  python.stderr.on("data", (data) => {
-    console.error("PYTHON ERROR:", data.toString());
+  python.stderr.on("data", (err) => {
+    console.error("Python error:", err.toString());
   });
 
-  python.on("close", () => {
-    console.log("Python Process Closed");
-  });
+  python.on("close", () => console.log("Python Closed"));
 }
 
 module.exports = { startPythonStream, setWindow };
