@@ -1,10 +1,13 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const { startPythonStream, setWindow } = require("./Utilities/getNetwork");
+const {
+  startNetworkStream,
+  setWindow,
+  isOnline,
+  getNetworkSpeed,
+} = require("./Utilities/getNetwork");
 
 const setupGPU = require("./Utilities/setupGPU");
-const getNetworkSpeed = require("./Utilities/getNetwork");
-const network = require("./Utilities/getNetwork");
 const db = require("./Utilities/db");
 const process = require("process");
 const {
@@ -60,7 +63,7 @@ const createWindow = async () => {
 
     win.once("ready-to-show", () => {
       win.show();
-      setTimeout(() => startPythonStream(), 1200);
+      setTimeout(() => startNetworkStream(), 1200);
     });
   } catch (error) {
     console.error("error in creing window", error);
@@ -78,10 +81,17 @@ try {
   // );
 
   ipcMain.on("get-net-speed", async (e) => {
-    // console.log("is online: ", net.isOnline());
-    if (net.isOnline()) {
-      const speed = await getNetworkSpeed();
+    if (isOnline()) {
+      const speed = getNetworkSpeed();
       e.reply("net-speed-data", speed);
+    } else {
+      e.reply("net-speed-data", {
+        downloadSpeed: "0 B/s",
+        uploadSpeed: "0 B/s",
+        ip: "0.0.0.0",
+        ping: "--",
+        packetLoss: "--",
+      });
     }
   });
 
