@@ -88,19 +88,20 @@ try {
   });
 
   ipcMain.on("window-close", () => {
-   try{ if (win) {
-      // make sure the window exists
-      win.close(); // close it
-      win = null; // free reference
-      db.close();
-    }}catch(err){
-     console.error(err);
-   } finally {
-
-     db.close((eer) => {
-      console.log("error insave data: ",err);
-    });
-  }
+    try {
+      if (win) {
+        // make sure the window exists
+        win.close(); // close it
+        win = null; // free reference
+        db.close();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      db.close((eer) => {
+        console.log("error insave data: ", err);
+      });
+    }
   });
 
   ipcMain.on("get-usage-live", async (event) => {
